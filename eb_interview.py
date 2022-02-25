@@ -22,7 +22,7 @@ def scrap_rating(movie):
 
 def scrap_oscars(movie):
     movie_link = movie.find('td', class_='titleColumn').a.attrs.get('href')
-    movie_response = requests.get(main_url + movie_link)
+    movie_response = requests.get(constants.MAIN_URL + movie_link)
     movie_soup = BeautifulSoup(movie_response.text, 'html.parser')
     won_oscar = str(movie_soup.find(string=re.compile('Won [0-9]')))
     oscar = 0 if won_oscar == 'None' else int(''.join(filter(str.isdigit, won_oscar)))
@@ -69,11 +69,11 @@ def oscar_score_calculator(number_of_oscars):
     score = 0
     if number_of_oscars == 0:
         score = 0
-    elif number_of_oscars < 2:
+    elif number_of_oscars <= 2:
         score = 0.3
-    elif number_of_oscars < 5:
+    elif number_of_oscars <= 5:
         score = 0.5
-    elif number_of_oscars < 10:
+    elif number_of_oscars <= 10:
         score = 1
     else:
         score = 1.5
@@ -97,18 +97,16 @@ def adjusted_data(data_arr):
 
 
 if __name__ == '__main__':
-    main_url = constants.MAIN_URL
-    top_list = constants.TOP_LIST
 
-    response = requests.get(top_list)
+    response = requests.get(constants.TOP_LIST)
     soup = BeautifulSoup(response.text, 'html.parser')
     movies = soup.find('tbody', class_='lister-list').find_all('tr')[:constants.TOP_NUMBER]
 
     data = scraper(movies)
-    df_before = pd.DataFrame(data, index=pd.RangeIndex(start=1, stop=constants.TOP_NUMBER+1, name='Rank'))
+    df_before = pd.DataFrame(data, index=pd.RangeIndex(start=1, stop=constants.TOP_NUMBER + 1, name='Rank'))
 
     after_adjustments = adjusted_data(data)
-    dt_after = pd.DataFrame(after_adjustments, index=pd.RangeIndex(start=1, stop=constants.TOP_NUMBER+1, name='Rank'))
+    dt_after = pd.DataFrame(after_adjustments, index=pd.RangeIndex(start=1, stop=constants.TOP_NUMBER + 1, name='Rank'))
     df_after = dt_after.sort_values('Rating', ascending=False, ignore_index=True)
 
     df_combined = pd.concat([df_before, df_after])
