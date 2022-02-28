@@ -14,7 +14,6 @@ def scrap_name(movie):
     The name of the movie
     """
     name = movie.find('td', class_='titleColumn').a.text
-    print('name = ' + str(type(name)))
     return name
 
 
@@ -27,7 +26,6 @@ def scrap_votes(movie):
     The number of votes that the current movie has.
     """
     votes = movie.find('span', {"name": 'nv'})['data-value']
-    print('cotes = ' + str(type(votes)))
     return votes
 
 
@@ -40,7 +38,6 @@ def scrap_rating(movie):
     The rating of the movie.
     """
     rating = movie.find('td', class_='ratingColumn imdbRating').strong.text
-    print('rating = ' + str(type(rating)))
     return rating
 
 
@@ -58,7 +55,6 @@ def scrap_oscars(movie):
     movie_soup = BeautifulSoup(movie_response.text, 'html.parser')
     won_oscar = str(movie_soup.find(string=re.compile('Won [0-9]')))
     oscar = 0 if won_oscar == 'None' else int(''.join(filter(str.isdigit, won_oscar)))
-    print('scrap_oscar = ' + str(type(oscar)))
     return oscar
 
 
@@ -77,8 +73,6 @@ def scraper(movie_arr):
     vote_count = []
 
     for movie in movie_arr:
-        # .span.attrs.get('data-value')
-        print('movie type' + str(type(movie)))
         name = scrap_name(movie)
         movie_names.append(name)
 
